@@ -7,10 +7,27 @@ const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 dotenv.config()
 
+//route
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var inventoryRouter = require('./routes/inventory')
 
 var app = express();
+
+const authUser = require('./middleware/authUser');
+
+var url = 'mongodb+srv://agi:pB6OQmIrER3vsKw1@cluster0.xepmz.mongodb.net/?retryWrites=true&w=majority';
+var connect = mongoose.connect(url, {
+
+});
+connect.then(
+    (db) => {
+        console.log("Connection to Data Base Successfull")
+    },
+    (err) => {
+        console.log("Connection to data Base Error: ",err)
+    }
+)
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,7 +40,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/inventory', authUser, inventoryRouter);
+app.use('/user', usersRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

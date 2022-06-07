@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const User = require('../model/user')
 const bcrypt = require('bcrypt');
 const req = require('express/lib/request');
+const jwt = require('jsonwebtoken')
 
 var signup = (async(req, res) => {
     const isEmailExist = await User.findOne({email: req.body.email})
@@ -11,7 +12,7 @@ var signup = (async(req, res) => {
     if (isUsernameExist) return res.status(400).json({error: "username already exist"})
 
     const salt = await bcrypt.genSalt(10)
-    const hashPassword = await bcrypt.hash(req.body.Password, salt)
+    const hashPassword = await bcrypt.hash(req.body.password, salt)
 
     var user = new User({
         name: req.body.name,
